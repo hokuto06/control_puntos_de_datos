@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Detalle del Punto</title>
+</head>
+<body>
+    <h1>Detalle del Punto {{ punto.numero_punto }}</h1>
+    <p><strong>Área:</strong> {{ punto.area }}</p>
+    <p><strong>Estado:</strong> {{ punto.estado }}</p>
+    <p><strong>Comentarios:</strong> {{ punto.comentarios }}</p>
+    <p><strong>Certificado:</strong> {{ punto.certificado|yesno:"Sí,No" }}</p>
+    <a href="{% url 'punto_list' %}">Volver a la lista</a>
+</body>
+</html>

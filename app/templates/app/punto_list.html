@@ -1,0 +1,113 @@
+{% extends "base.html" %}
+    {% load static %}
+{% block content %}
+<div class="container-fluid px-4">
+
+    <h1>Puntos de Datos</h1>
+    <button id="openModalBtn">Agregar</button>
+
+    <!-- Modal para el Formulario -->
+    <div id="myModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <form method="POST">
+                {% csrf_token %}
+                {{ form.as_p }}
+                <button type="submit">Guardar</button>
+            </form>
+        </div>
+    </div>
+
+    <div class="card mb-4">
+        <div class="card-header">
+            <i class="fas fa-table me-1"></i>
+            Dispositivos
+        </div>
+        <div class="card-body">
+                <table class="table">
+
+    <!-- <table id="puntoTable"> -->
+        <thead>
+            <tr>
+                <th >Número de Punto</th>
+                <th >Área</th>
+                <th >Estado</th>
+                <th >Comentarios</th>
+                <th>Certificado</th>
+                <th>Eliminar</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for punto in puntos %}
+            <tr>
+                <td><a href="{% url 'punto_detail' punto.numero_punto %}">{{ punto.numero_punto }}</a></td>
+                <td>{{ punto.area }}</td>
+                <td>
+                    <select>
+                        <option value="finalizado" {% if punto.estado == "finalizado" %}selected{% endif %}>Finalizado</option>
+                        <option value="pendiente" {% if punto.estado == "pendiente" %}selected{% endif %}>Pendiente</option>
+                        <option value="reservada" {% if punto.estado == "reservada" %}selected{% endif %}>Reservada</option>
+                    </select>
+                </td>
+                <td contenteditable="true">{{ punto.comentarios }}</td>
+                <td>
+                    <select>
+                        <option value="yes" {% if punto.estado == "yes" %}selected{% endif %}>SI</option>
+                        <option value="no" {% if punto.estado == "no" %}selected{% endif %}>NO</option>
+                    </select>
+                </td>
+                <td>
+                    <a href="{% url 'delete_punto' punto.numero_punto %}" class="delete-icon">🗑️</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+</div>
+</div>
+
+<script>
+    // Modal
+    const modal = document.getElementById("myModal");
+    const btn = document.getElementById("openModalBtn");
+    const span = document.getElementsByClassName("close")[0];
+
+    btn.onclick = function() { modal.style.display = "block"; }
+    span.onclick = function() { modal.style.display = "none"; }
+    window.onclick = function(event) { if (event.target == modal) modal.style.display = "none"; }
+
+    // Ordenar Tabla
+    function sortTable(n) {
+        let table, rows, switching, i, x, y, shouldSwitch, dir, switchcount = 0;
+        table = document.getElementById("puntoTable");
+        switching = true;
+        dir = "asc";
+        while (switching) {
+            switching = false;
+            rows = table.rows;
+            for (i = 1; i < (rows.length - 1); i++) {
+                shouldSwitch = false;
+                x = rows[i].getElementsByTagName("TD")[n];
+                y = rows[i + 1].getElementsByTagName("TD")[n];
+                if (dir == "asc" && x.innerHTML.toLowerCase() > y.innerHTML.toLowerCase()) {
+                    shouldSwitch = true;
+                    break;
+                } else if (dir == "desc" && x.innerHTML.toLowerCase() < y.innerHTML.toLowerCase()) {
+                    shouldSwitch = true;
+                    break;
+                }
+            }
+            if (shouldSwitch) {
+                rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+                switching = true;
+                switchcount++;
+            } else if (switchcount === 0 && dir === "asc") {
+                dir = "desc";
+                switching = true;
+            }
+        }
+    }
+</script>
+{% endblock %}
+
